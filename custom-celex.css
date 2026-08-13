@@ -1,0 +1,3296 @@
+/* ============================================================
+   CELEX · UAM Azcapotzalco · Homepage v2.0
+   Estilo basado en: conclusive-wonders-955078.framer.app (Denzil)
+   Stack: HTML5 · Bootstrap 5.3.8 · CSS personalizado
+   ============================================================ */
+
+/* ============================================================
+   INICIO: DESIGN TOKENS
+   ============================================================ */
+:root {
+  /* Colores de marca — NO modificar */
+  --celex-yellow:        #F5C518;
+  --celex-yellow-light:  #FFF5C2;
+  --celex-orange:        #E87A2A;
+  --celex-orange-light:  #FEF0E0;
+  --celex-red:           #b31010;
+  --celex-dark:          #1A1A1A;
+  --celex-gray-dark:     #3D3D3D;
+  --celex-gray-bg:       #F4F4F2;
+  --celex-white:         #FFFFFF;
+
+  /* Tipografía (Inter = Denzil) */
+  --celex-font-sans:  'Stack Sans Headline', 'Inter', 'Segoe UI', system-ui, sans-serif;
+
+  /* Escala tipográfica — Denzil usa clamp muy agresivos */
+  --type-hero:      clamp(2.5rem, 6vw, 6rem);
+  --type-display:   clamp(2rem, 4vw, 3.75rem);
+  --type-h2:        clamp(1.5rem, 3vw, 2.25rem);
+  --type-body:      1rem;
+  --type-small:     0.8125rem;
+  --type-label:     0.72rem;
+
+  /* Espaciado — Denzil usa 120px verticales */
+  --section-py:     8rem;
+  --section-py-md:  5rem;
+  --section-py-sm:  3.5rem;
+
+  /* Geometría Denzil */
+  --card-radius:    10px;
+  --btn-radius:     10px;
+
+  /* Sombra Denzil (muy sutil en reposo) */
+  --shadow-card:    0 0.6px 0.42px -1px rgba(0,0,0,.22),
+                    0 2.29px 1.6px  -2px rgba(0,0,0,.2),
+                    0 10px 7px      -3px rgba(0,0,0,.14);
+  --shadow-hover:   0 12px 48px rgba(0,0,0,.14);
+  --shadow-mega:    0 24px 60px rgba(0,0,0,.1);
+
+  /* Easing exacto de Denzil */
+  --ease:           cubic-bezier(0.44, 0, 0.56, 1);
+  --t-std:          0.38s cubic-bezier(0.44, 0, 0.56, 1);
+  --t-fast:         0.22s cubic-bezier(0.44, 0, 0.56, 1);
+  --t-slow:         0.65s cubic-bezier(0.44, 0, 0.56, 1);
+}
+/* FIN: DESIGN TOKENS */
+
+
+/* ============================================================
+   INICIO: BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--celex-font-sans);
+  font-size: var(--type-body);
+  color: var(--celex-dark);
+  background: var(--celex-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { transition: color var(--t-fast), opacity var(--t-fast); }
+a:not([class]) { color: var(--celex-dark); text-decoration: underline; }
+
+::selection { background: var(--celex-yellow); color: var(--celex-dark); }
+/* FIN: BASE */
+
+
+/* ============================================================
+   INICIO: SCROLL ANIMATIONS (Intersection Observer)
+   Clases aplicadas por JS al entrar al viewport.
+   Denzil usa fadeUp + slight horizontal slides.
+   ============================================================ */
+
+/* Estado inicial: invisible + desplazado */
+.ca-fade-up   { opacity: 0; transform: translateY(44px); }
+.ca-fade-left  { opacity: 0; transform: translateX(-44px); }
+.ca-fade-right { opacity: 0; transform: translateX(44px); }
+.ca-fade-in    { opacity: 0; transform: none; }
+.ca-scale      { opacity: 0; transform: scale(0.94); }
+
+/* Transición base para todos */
+.ca-fade-up, .ca-fade-left, .ca-fade-right, .ca-fade-in, .ca-scale {
+  transition: opacity var(--t-slow), transform var(--t-slow);
+  will-change: opacity, transform;
+}
+
+/* Estado visible — clase añadida por JS */
+.ca-is-visible {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Delays para animaciones en cascada */
+.ca-d1 { transition-delay: 0.08s; }
+.ca-d2 { transition-delay: 0.18s; }
+.ca-d3 { transition-delay: 0.28s; }
+.ca-d4 { transition-delay: 0.38s; }
+.ca-d5 { transition-delay: 0.48s; }
+.ca-d6 { transition-delay: 0.58s; }
+/* FIN: SCROLL ANIMATIONS */
+
+
+/* ============================================================
+   INICIO: COMPONENTES COMPARTIDOS
+   (Botones, badges, eyebrows — usados en múltiples módulos)
+   ============================================================ */
+
+/* — Eyebrow label (estilo Denzil: mono + uppercase + punto de color) — */
+.celex-eyebrow {
+  font-family: var(--celex-font-mono);
+  font-size: var(--type-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--celex-yellow);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.celex-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: var(--celex-yellow);
+  flex-shrink: 0;
+}
+
+/* — Título de sección — */
+.celex-section-title {
+  font-size: var(--type-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  color: var(--celex-dark);
+}
+
+/* — Botón base (spec exacta Denzil: 14px 20px, r-10, uppercase) — */
+.celex-btn {
+  font-family: var(--celex-font-sans);
+  font-size: var(--type-small);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: var(--btn-radius);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  transition: background var(--t-fast), color var(--t-fast),
+              box-shadow var(--t-fast), transform var(--t-fast);
+  white-space: nowrap;
+}
+.celex-btn:hover { transform: translateY(-2px); }
+
+.celex-btn--yellow { background: var(--celex-yellow); color: var(--celex-dark); }
+.celex-btn--yellow:hover {
+  background: #e2b500;
+  color: var(--celex-dark);
+  box-shadow: 0 8px 28px rgba(245,197,24,.40);
+}
+
+.celex-btn--dark { background: var(--celex-dark); color: var(--celex-yellow); }
+.celex-btn--dark:hover {
+  background: #2e2e2e;
+  color: var(--celex-yellow);
+  box-shadow: 0 8px 28px rgba(0,0,0,.30);
+}
+
+.celex-btn--ghost {
+  background: transparent;
+  color: var(--celex-dark);
+  border: 1.5px solid rgba(26,26,26,.25);
+}
+.celex-btn--ghost:hover {
+  background: var(--celex-dark);
+  color: var(--celex-white);
+  border-color: var(--celex-dark);
+}
+
+.celex-btn--ghost-light {
+  background: transparent;
+  color: var(--celex-white);
+  border: 1.5px solid rgba(255,255,255,.3);
+}
+.celex-btn--ghost-light:hover {
+  background: var(--celex-white);
+  color: var(--celex-dark);
+  border-color: var(--celex-white);
+}
+
+/* Arrow inline (texto puro, sin icon font) */
+.celex-arrow { display: inline-block; transition: transform var(--t-fast); }
+.celex-btn:hover .celex-arrow,
+a:hover .celex-arrow { transform: translateX(4px); }
+
+/* — Badges — */
+.celex-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-block;
+  line-height: 1.4;
+}
+.celex-badge--dark         { background: var(--celex-dark); color: var(--celex-yellow); }
+.celex-badge--outline      { border: 1px solid #ccc; color: var(--celex-gray-dark); }
+.celex-badge--yellow       { background: var(--celex-yellow); color: var(--celex-dark); }
+.celex-badge--yellow-light { background: var(--celex-yellow-light); color: #6a5000; border: 1px solid rgba(245,197,24,.35); }
+.celex-badge--red          { background: var(--celex-red); color: #fff; }
+.celex-badge--orange       { background: var(--celex-orange); color: #fff; }
+
+/* — Divisor de sección (Denzil usa líneas finas) — */
+.celex-rule {
+  border: none;
+  border-top: 1px solid #e2e2e2;
+  margin: 0;
+}
+.celex-rule--dark { border-color: rgba(255,255,255,.1); }
+
+/* — Sección base — */
+.celex-section       { padding: var(--section-py) 0; }
+.celex-section--light { background: var(--celex-gray-bg); }
+.celex-section--black { background: #000; }
+.celex-section--dark  { background: var(--celex-dark); }
+
+/* Overrides de color en secciones oscuras */
+.celex-section--black .celex-section-title,
+.celex-section--dark  .celex-section-title { color: var(--celex-white); }
+.celex-section--black .celex-eyebrow,
+.celex-section--dark  .celex-eyebrow { color: var(--celex-yellow); }
+.celex-section--black p,
+.celex-section--dark  p { color: #999; }
+
+/* — Link-flecha al pie de secciones (estilo Denzil) — */
+.celex-link-arrow {
+  font-size: var(--type-small);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--celex-dark);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: gap var(--t-fast), color var(--t-fast);
+}
+.celex-link-arrow:hover { gap: 0.75rem; color: var(--celex-gray-dark); }
+.celex-link-arrow--light { color: var(--celex-white); }
+.celex-link-arrow--light:hover { color: var(--celex-yellow); }
+/* FIN: COMPONENTES COMPARTIDOS */
+
+
+/* ============================================================
+   INICIO: NAVBAR
+   ============================================================ */
+.celex-header {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  background: var(--celex-white);
+}
+
+/* Barra institucional (logos) */
+.celex-topbar {
+  border-bottom: 1px solid #ebebeb;
+  padding: 0.45rem 0;
+  background: var(--celex-gray-bg);
+}
+.celex-topbar .container-xl {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.celex-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+.celex-logo-link { text-decoration: none; display: inline-flex; align-items: center; flex-shrink: 0; }
+.celex-logo            { height: 38px; width: auto; object-fit: contain; }
+.celex-logo--uam       { height: 38px; }
+.celex-logo--division  { height: 32px; }
+.celex-logo--celex     { height: 44px; }
+.celex-logo-sep {
+  width: 1px; height: 28px;
+  background: #cfcfcf;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Barra de nav principal */
+.celex-navbar-bar {
+  border-bottom: 1px solid #ebebeb;
+}
+.celex-navbar-bar .navbar {
+  padding: 0;
+  position: relative; /* necesario para el mega-menu */
+}
+
+/* Links de navegación */
+.celex-nav-link {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  color: var(--celex-gray-dark) !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1.1rem 0.9rem !important;
+  border-bottom: 2px solid transparent;
+  transition: color var(--t-fast), border-color var(--t-fast);
+  display: flex !important;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+.celex-nav-link:hover,
+.celex-nav-link.active,
+.celex-has-mega.show > .celex-nav-link {
+  color: var(--celex-dark) !important;
+  border-bottom-color: var(--celex-yellow);
+}
+/* Quitar flechita de Bootstrap en dropdown */
+.celex-nav-link.dropdown-toggle::after { display: none; }
+
+/* Indicador rojo para Convocatorias */
+.celex-nav-alert-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--celex-red);
+  flex-shrink: 0;
+  position: relative;
+}
+.celex-nav-alert-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid var(--celex-red);
+  animation: pulse-dot 1.8s ease infinite;
+}
+@keyframes pulse-dot {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+
+/* CTA "Ingresar" */
+.celex-btn-ingresar {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--celex-yellow);
+  color: var(--celex-dark) !important;
+  padding: 6px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background var(--t-fast), transform 0.12s ease;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+.celex-btn-ingresar:hover {
+  background: #e2b500;
+  color: var(--celex-dark) !important;
+}
+.celex-btn-ingresar:active {
+  transform: scale(0.95);
+  background: #c9a000;
+}
+
+/* Hamburger toggler */
+.celex-toggler {
+  border: 1.5px solid rgba(26,26,26,.2);
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  margin-left: auto;
+}
+.celex-toggler:focus { box-shadow: none; outline: 2px solid var(--celex-yellow); }
+/* FIN: NAVBAR */
+
+
+/* ============================================================
+   INICIO: MEGA-MENU
+   ============================================================ */
+.celex-megamenu {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 1050;
+  background: var(--celex-white);
+  border: none;
+  border-top: 3px solid var(--celex-yellow);
+  border-bottom: 1px solid #e8e8e8;
+  border-radius: 0 0 12px 12px;
+  box-shadow: var(--shadow-mega);
+  padding: 2.25rem 0 2.5rem;
+  animation: megaSlideDown 0.22s var(--ease);
+}
+@keyframes megaSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Heading de grupo dentro del mega-menu */
+.celex-mega-group {
+  margin-bottom: 1.5rem;
+}
+.celex-mega-group:last-child { margin-bottom: 0; }
+
+.celex-mega-heading {
+  font-family: var(--celex-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--celex-yellow);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(245,197,24,.25);
+}
+
+/* Links del mega-menu */
+.celex-mega-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--celex-gray-dark);
+  text-decoration: none;
+  padding: 0.3rem 0;
+  transition: color var(--t-fast), padding-left var(--t-fast);
+  line-height: 1.4;
+}
+.celex-mega-link::before {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 1.5px;
+  background: var(--celex-yellow);
+  transition: width var(--t-fast);
+  flex-shrink: 0;
+}
+.celex-mega-link:hover {
+  color: var(--celex-dark);
+  padding-left: 4px;
+}
+.celex-mega-link:hover::before { width: 14px; }
+
+/* Dot rojo para convocatorias urgentes */
+.celex-mega-link--urgent { color: var(--celex-red); }
+.celex-mega-link--urgent:hover { color: #8a0c0c; }
+.celex-mega-link--urgent::after {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--celex-red);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Columna destacada dentro del mega-menu */
+.celex-mega-featured {
+  background: var(--celex-dark);
+  border-radius: var(--card-radius);
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.celex-mega-featured__tag {
+  font-family: var(--celex-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--celex-yellow);
+  margin-bottom: 0.75rem;
+}
+.celex-mega-featured__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--celex-white);
+  line-height: 1.3;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+}
+.celex-mega-featured__desc {
+  font-size: 0.825rem;
+  color: #888;
+  line-height: 1.6;
+  flex: 1;
+  margin-bottom: 1.25rem;
+}
+
+/* Mobile: mega-menu como acordeón */
+@media (max-width: 991.98px) {
+  .celex-megamenu {
+    position: static !important;
+    width: 100% !important;
+    border-top: none !important;
+    border-left: 3px solid var(--celex-yellow);
+    border-radius: 0 0 8px 8px;
+    box-shadow: none !important;
+    padding: 1rem 1.25rem;
+    background: var(--celex-gray-bg);
+    animation: none;
+    margin-bottom: 0.25rem;
+  }
+  .celex-mega-featured { margin-top: 1rem; }
+  .celex-navbar-bar .navbar-collapse {
+    background: var(--celex-white);
+    border-top: 1px solid #ebebeb;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+  }
+  .celex-nav-link {
+    border-bottom: none !important;
+    padding: 0.7rem 1rem !important;
+  }
+  .celex-nav-link:hover { background: var(--celex-gray-bg); }
+  .celex-btn-ingresar {
+    display: block;
+    width: calc(100% - 2rem);
+    margin: 0.75rem 1rem;
+    justify-content: center;
+  }
+}
+@media (max-width: 767.98px) {
+  .celex-logo--division, .celex-logo-sep:first-of-type { display: none; }
+}
+/* FIN: MEGA-MENU */
+
+
+/* ============================================================
+   INICIO: HERO
+   ============================================================ */
+.celex-hero {
+  background-color: #C1121F;
+  background-image: url('Imgs/bg_pattern_red.svg');
+  background-size: cover;
+  background-position: center;
+  padding: 3rem 0 4rem;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ruido de fondo sutil (Denzil usa texturas muy sutiles) */
+.celex-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.celex-hero .container-xl { position: relative; z-index: 1; }
+
+/* Eyebrow del hero */
+.celex-hero__label {
+  font-family: var(--celex-font-mono);
+  font-size: 0.72rem;
+  color: var(--celex-white);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0.9;
+}
+.celex-hero__label-pulse {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--celex-yellow);
+  flex-shrink: 0;
+  position: relative;
+}
+.celex-hero__label-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(245,197,24,.5);
+  animation: pulse-dot 2s ease infinite;
+}
+
+/* Headline masivo — la pieza central del diseño Denzil */
+.celex-hero__headline {
+  font-family: var(--celex-font-sans);
+  font-size: var(--type-hero);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  text-transform: none;
+color: var(--celex-white);
+margin-bottom: 1.75rem;
+}
+.celex-hero__headline-accent { color: var(--celex-yellow); }
+
+.celex-hero__subtitle {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.8;
+  max-width: 460px;
+  margin-bottom: 0;
+}
+
+/* Subtítulo */
+.celex-hero__subtitle {
+  font-size: 1.05rem;
+  color: #7a7a7a;
+  line-height: 1.8;
+  max-width: 460px;
+  margin-bottom: 0;
+}
+
+/* Divisor */
+.celex-hero__rule {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,.3);
+  margin: 2rem 0;
+}
+
+/* Grid de estadísticas */
+.celex-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.celex-stat {
+  padding: 0 1.25rem 0 0;
+  border-right: 1px solid rgba(255,255,255,.25);
+}
+.celex-stat:first-child { padding-left: 0; }
+.celex-stat:last-child  { border-right: none; }
+
+.celex-stat__number {
+  font-family: var(--celex-font-mono);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--celex-yellow);
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.celex-stat__label {
+  font-size: 0.68rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Indicador scroll (Denzil style: animado hacia abajo) */
+.celex-hero__scroll {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  opacity: 0.35;
+  transition: opacity var(--t-fast);
+  z-index: 2;
+}
+.celex-hero__scroll:hover { opacity: 0.8; }
+.celex-hero__scroll-text {
+  font-family: var(--celex-font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--celex-white);
+  writing-mode: vertical-rl;
+}
+.celex-hero__scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,.5));
+  animation: scroll-line 1.8s ease infinite;
+}
+@keyframes scroll-line {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+@media (max-width: 991.98px) {
+  .celex-hero { min-height: auto; padding: var(--section-py-md) 0; }
+  .celex-stats-row { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .celex-stat { border-right: none; padding: 0; }
+  .celex-hero__scroll { display: none; }
+}
+@media (max-width: 767.98px) {
+  .celex-hero { padding: var(--section-py-sm) 0; }
+  .celex-hero__subtitle { max-width: 100%; }
+}
+/* FIN: HERO */
+
+
+/* ============================================================
+   INICIO: CAROUSEL
+   ============================================================ */
+.celex-carousel-wrap {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  position: relative;
+}
+
+.celex-slide {
+  height: 100%;
+  min-height: 460px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Overlay tipo Denzil: gradiente bottom-up denso */
+.celex-slide__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.50) 40%,
+    rgba(0,0,0,.12) 100%
+  );
+}
+
+.celex-slide__content {
+  position: relative;
+  z-index: 2;
+  padding: 2.25rem 2.5rem 3.5rem 2.5rem !important;
+}
+.celex-slide__badge {
+  display: inline-block;
+  background: var(--celex-red);
+  color: #fff;
+  font-family: var(--celex-font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 4px;
+  margin-bottom: 0.85rem;
+}
+.celex-slide__title {
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+.celex-slide__subtitle {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,.65);
+  margin: 0;
+}
+
+/* Dots amarillos — override completo de Bootstrap */
+.celex-carousel-dots {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 2rem;
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+}
+.celex-carousel-dots [data-bs-target] {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: rgba(245,197,24,.35) !important;
+  border: none !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: background var(--t-fast), transform var(--t-fast) !important;
+  overflow: hidden;
+  text-indent: -9999px;
+  cursor: pointer;
+}
+.celex-carousel-dots [data-bs-target].active,
+.celex-carousel-dots [data-bs-target]:hover {
+  background: var(--celex-yellow) !important;
+  transform: scale(1.4) !important;
+}
+
+/* Flechas de navegación */
+.celex-carousel-wrap .carousel-control-prev,
+.celex-carousel-wrap .carousel-control-next {
+  width: 42px; height: 42px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 50%;
+  top: 50%; bottom: auto;
+  transform: translateY(-50%);
+  opacity: 1;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  margin: 0 1rem;
+}
+.celex-carousel-wrap .carousel-control-prev:hover,
+.celex-carousel-wrap .carousel-control-next:hover {
+  background: var(--celex-yellow);
+  border-color: var(--celex-yellow);
+}
+.celex-carousel-wrap .carousel-control-prev-icon,
+.celex-carousel-wrap .carousel-control-next-icon { width: 16px; height: 16px; }
+
+@media (max-width: 991.98px) { .celex-slide { height: 380px; } }
+@media (max-width: 767.98px) { .celex-slide { height: 280px; } }
+/* FIN: CAROUSEL */
+
+
+/* ============================================================
+   INICIO: ALERTAS & CONVOCATORIAS
+   ============================================================ */
+
+/* Tarjetas de convocatoria — Denzil style: flat + left accent */
+.celex-alerta-card {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--celex-white);
+  border-radius: var(--card-radius);
+  border: 1px solid #eaeaea;
+  border-left: 3px solid var(--celex-red);
+  transition: box-shadow var(--t-std), transform var(--t-std), border-color var(--t-std);
+  cursor: pointer;
+}
+.celex-alerta-card + .celex-alerta-card { margin-top: 1rem; }
+.celex-alerta-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+  border-color: var(--celex-red);
+}
+
+.celex-alerta-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0.1rem;
+}
+.celex-alerta-date__box {
+  background: var(--celex-red);
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 9px;
+  text-align: center;
+  line-height: 1;
+  min-width: 44px;
+  margin-bottom: 0.4rem;
+}
+.celex-alerta-date__num   { font-size: 1.2rem; font-weight: 700; display: block; }
+.celex-alerta-date__month { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-top: 1px; }
+.celex-alerta-date__cat   { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; text-align: center; }
+
+.celex-alerta-body__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--celex-dark);
+  margin-bottom: 0.35rem;
+  line-height: 1.3;
+}
+.celex-alerta-body__desc {
+  font-size: 0.825rem;
+  color: #777;
+  line-height: 1.65;
+  margin-bottom: 0.65rem;
+}
+.celex-alerta-body__cta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--celex-red);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: gap var(--t-fast), color var(--t-fast);
+}
+.celex-alerta-body__cta:hover { gap: 0.6rem; color: #8a0c0c; }
+/* FIN: ALERTAS */
+
+
+/* ============================================================
+   INICIO: TIMELINE
+   ============================================================ */
+.celex-timeline { position: relative; padding-left: 0; }
+
+.celex-timeline__head {
+  font-family: var(--celex-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--celex-yellow);
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(245,197,24,.22);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.celex-timeline__item {
+  display: flex;
+  gap: 1.1rem;
+  padding-bottom: 1.75rem;
+  position: relative;
+}
+/* Línea vertical conectora */
+.celex-timeline__item:not(.celex-timeline__item--last)::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(245,197,24,.3), rgba(245,197,24,.05));
+}
+
+.celex-timeline__dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--celex-yellow);
+  flex-shrink: 0;
+  margin-top: 4px;
+  box-shadow: 0 0 0 4px rgba(245,197,24,.18);
+  position: relative;
+  z-index: 1;
+  transition: box-shadow var(--t-fast);
+}
+.celex-timeline__item:hover .celex-timeline__dot {
+  box-shadow: 0 0 0 8px rgba(245,197,24,.12);
+}
+
+.celex-timeline__date {
+  display: block;
+  font-family: var(--celex-font-mono);
+  font-size: 0.68rem;
+  color: var(--celex-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+.celex-timeline__text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--celex-dark);
+  line-height: 1.45;
+}
+/* FIN: TIMELINE */
+
+
+/* ============================================================
+   INICIO: CARDS DE IDIOMAS
+   ============================================================ */
+.celex-idioma-card {
+  background: var(--celex-white);
+  border: 1px solid #e5e5e5;
+  border-radius: var(--card-radius);
+  padding: 2.25rem 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--t-std), transform var(--t-std), border-color var(--t-std);
+}
+/* Línea superior de acento (Denzil: top border on hover) */
+.celex-idioma-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--celex-yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-std);
+}
+.celex-idioma-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-5px); border-color: transparent; }
+.celex-idioma-card:hover::before { transform: scaleX(1); }
+
+.celex-idioma-card__flag { font-size: 2.75rem; line-height: 1; margin-bottom: 1.1rem; }
+.celex-idioma-card__name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--celex-dark);
+  margin-bottom: 0.25rem;
+}
+.celex-idioma-card__cefr {
+  font-family: var(--celex-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--celex-yellow);
+  margin-bottom: 1.1rem;
+}
+.celex-idioma-card__levels {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+.celex-idioma-card__levels li {
+  font-size: 0.84rem;
+  color: #666;
+  padding-left: 1.1rem;
+  position: relative;
+  line-height: 1.45;
+}
+.celex-idioma-card__levels li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  font-size: 0.7rem;
+  color: var(--celex-yellow);
+  top: 0.05em;
+}
+.celex-idioma-card__badges { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+/* FIN: IDIOMAS */
+
+
+/* ============================================================
+   INICIO: CARDS DE HORARIOS
+   ============================================================ */
+.celex-horario-card {
+  background: var(--celex-white);
+  border: 1px solid #e5e5e5;
+  border-radius: var(--card-radius);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow var(--t-std), transform var(--t-std);
+  position: relative;
+  overflow: hidden;
+}
+.celex-horario-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--celex-yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-std);
+}
+.celex-horario-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
+.celex-horario-card:hover::after { transform: scaleX(1); }
+
+.celex-horario-card__num {
+  font-family: var(--celex-font-mono);
+  font-size: 3rem;
+  font-weight: 400;
+  color: rgba(245,197,24,.18);
+  line-height: 1;
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  pointer-events: none;
+  transition: color var(--t-std);
+}
+.celex-horario-card:hover .celex-horario-card__num { color: rgba(245,197,24,.35); }
+
+.celex-horario-card__icon  { font-size: 2.25rem; margin-bottom: 1rem; line-height: 1; }
+.celex-horario-card__name  {
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--celex-dark); margin-bottom: 0.5rem; letter-spacing: -0.01em;
+}
+.celex-horario-card__desc  { font-size: 0.85rem; color: #777; line-height: 1.65; flex: 1; margin-bottom: 1.25rem; }
+/* FIN: HORARIOS */
+
+
+/* ============================================================
+   INICIO: PLANTA ACADÉMICA
+   ============================================================ */
+.celex-teacher-card {
+  background: var(--celex-gray-bg);
+  border: 1px solid #e5e5e5;
+  border-radius: var(--card-radius);
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  transition: box-shadow var(--t-std), transform var(--t-std), background var(--t-std);
+  cursor: default;
+}
+.celex-teacher-card:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-3px);
+  background: var(--celex-white);
+}
+
+.celex-teacher-card__avatar {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  background: var(--celex-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 0.9rem;
+  transition: box-shadow var(--t-std);
+  overflow: hidden;
+}
+.celex-teacher-card:hover .celex-teacher-card__avatar {
+  box-shadow: 0 0 0 4px rgba(245,197,24,.3);
+}
+
+.celex-teacher-card__name     { display: block; font-size: 0.875rem; font-weight: 700; color: var(--celex-dark); }
+.celex-teacher-card__lang     { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--celex-yellow); margin-top: 0.2rem; }
+.celex-teacher-card__spec     { display: block; font-size: 0.7rem; color: #aaa; margin-top: 0.1rem; }
+
+/* Blockquote institucional — Denzil: borde grueso izquierdo en acento */
+.celex-blockquote {
+  border-left: 5px solid var(--celex-yellow);
+  padding: 2.5rem 2rem 2.5rem 2.75rem;
+  background: var(--celex-yellow-light);
+  border-radius: 0 var(--card-radius) var(--card-radius) 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.celex-blockquote__text {
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.72;
+  color: var(--celex-dark);
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+.celex-blockquote__caption {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+.celex-blockquote__logo { height: 36px; width: auto; opacity: 0.75; }
+.celex-blockquote__cap-title { font-size: 0.825rem; font-weight: 700; color: var(--celex-dark); display: block; }
+.celex-blockquote__cap-sub   { font-size: 0.72rem; color: #999; display: block; }
+/* FIN: PLANTA ACADÉMICA */
+
+
+/* ============================================================
+   RECURSOS Y TRÁMITES - TARJETAS Y HOVER (FIX BORDE ROJO)
+   ============================================================ */
+
+/* 1. Estado Base de la Tarjeta */
+.celex-recurso-card {
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .15); /* <-- Se quitó el !important de aquí */
+  border-radius: var(--card-radius);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--t-std), background var(--t-std), box-shadow var(--t-std) !important;
+}
+
+/* 2. Estado Hover de la Tarjeta — Outline Rojo */
+.celex-recurso-card:hover {
+  background: rgba(255, 255, 255, .05) !important;
+  border-color: #b31010 !important;                      /* Borde rojo institucional */
+  box-shadow: 0 4px 20px rgba(179, 16, 16, 0.25) !important; /* Resplandor rojo sutil */
+  transform: none !important;
+}
+
+/* 3. Estado Hover del Botón (CTA) — Fondo Blanco con Letras Negras */
+.celex-recurso-card .celex-btn:hover,
+.celex-recurso-card a.celex-btn:hover {
+  background-color: #FFFFFF !important;  /* Fondo blanco */
+  color: #000000 !important;             /* Texto negro */
+}
+
+/* Fuerza a la flechita y al texto interno a volverse negros en hover */
+.celex-recurso-card .celex-btn:hover *,
+.celex-recurso-card a.celex-btn:hover * {
+  color: #000000 !important;             /* Flecha negra */
+}
+
+/* Número decorativo de fondo */
+.celex-recurso-card__num {
+  font-family: var(--celex-font-mono);
+  font-size: 5rem;
+  color: rgba(255,255,255,.04);
+  line-height: 1;
+  position: absolute;
+  bottom: 1rem; right: 1.5rem;
+  pointer-events: none;
+  font-weight: 400;
+  transition: color var(--t-std);
+}
+.celex-recurso-card:hover .celex-recurso-card__num { color: rgba(179, 16, 16, 0.25); }
+
+.celex-recurso-card__icon  { font-size: 2rem; margin-bottom: 1.25rem; line-height: 1; }
+.celex-recurso-card__title { font-size: 1.05rem; font-weight: 700; color: var(--celex-white); margin-bottom: 0.75rem; line-height: 1.3; letter-spacing: -0.01em; }
+.celex-recurso-card__desc  { font-size: 0.85rem; color: #888; line-height: 1.72; flex: 1; margin-bottom: 1.75rem; }
+/* FIN: RECURSOS */
+
+/* ============================================================
+   INICIO: RESPONSIVE
+   ============================================================ */
+@media (max-width: 991.98px) {
+  :root {
+    --section-py: var(--section-py-md);
+  }
+  .celex-blockquote {
+    border-radius: var(--card-radius);
+    margin-top: 2rem;
+  }
+  .celex-stats-row { grid-template-columns: repeat(2, 1fr); gap: 1.25rem 1rem; }
+  .celex-stat { border-right: none; padding-right: 0; }
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --section-py: var(--section-py-sm);
+  }
+  .celex-alerta-card { grid-template-columns: 1fr; gap: 0.75rem; }
+  .celex-alerta-date { flex-direction: row; align-items: center; }
+  .celex-alerta-date__cat { margin-left: 0.5rem; }
+  .celex-blockquote {
+    border-left: none;
+    border-top: 5px solid var(--celex-yellow);
+    border-radius: var(--card-radius);
+    padding: 1.75rem;
+  }
+  .celex-footer .row > [class*="col"] { text-align: center; }
+  .celex-footer__links { align-items: center; }
+  .celex-footer__links a { padding-left: 0 !important; }
+  .celex-blockquote__caption { justify-content: center; }
+  .celex-marquee-bar { display: none; }
+  .celex-hero__scroll { display: none; }
+}
+
+/* Stats hero override */
+.celex-stat__number {
+  font-family: var(--celex-font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--celex-yellow);
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.celex-stat__label {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  display: block;
+  line-height: 1.4;
+}
+
+/* ── HERO TIPOGRAFÍA PERSONALIZADA ── */
+
+/* CELEX · UAM Azcapotzalco */
+.celex-hero__label {
+  font-family: 'Stack Sans Headline', 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #10001F;
+  letter-spacing: 0.05em;
+  text-transform: none;
+  opacity: 1;
+}
+
+/* Aprende. Certifícate. Trasciende. */
+.celex-hero__headline {
+  font-family: 'Stack Sans Headline', 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 82px;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--celex-white);
+  margin-bottom: 1.75rem;
+}
+
+
+/* ── HERO STATS AJUSTES ── */
+
+/* Líneas verticales amarillas con separación */
+.celex-stat {
+  padding: 0 1.5rem 0 1.5rem;
+  border-right: 1.5px solid var(--celex-yellow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.celex-stat:first-child {
+  padding-left: 1.5rem;
+  border-left: none;
+}
+.celex-stat:last-child {
+  border-right: none;
+}
+
+/* Número de stat */
+.celex-stat__number {
+  font-family: 'Stack Sans Headline', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--celex-yellow);
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* Texto descriptivo — 2 renglones, light */
+.celex-stat__label {
+  font-family: 'Stack Sans Headline', 'Inter', sans-serif;
+  font-weight: 100;
+  font-size: 12px;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  line-height: 1.4;
+  max-width: 80px;
+}
+
+/* Párrafo subtítulo más delgado */
+.celex-hero__subtitle {
+  font-family: 'Stack Sans Headline', 'Inter', sans-serif;
+  font-weight: 100;
+  font-size: 14px;
+  color: #FFFFFF;
+  line-height: 1.5;
+  max-width: 580px;
+  margin-bottom: 0;
+}
+
+/* Stats row alineado verticalmente */
+.celex-stats-row {
+  display: grid;
+  grid-template-columns: auto repeat(3, 1fr);
+  gap: 0;
+  align-items: center;
+}
+
+/* Logo UAM stat */
+.celex-stat--logo {
+  padding-left: 0 !important;
+  border-right: 1.5px solid var(--celex-yellow);
+  padding-right: 2.5rem;
+  align-items: flex-start !important;
+  border-left: none !important;
+}
+
+/* ── HERO ESPACIADO ── */
+.celex-hero__label {
+  margin-bottom: 1rem;
+}
+
+.celex-hero__headline {
+  margin-bottom: 1rem;
+}
+
+.celex-hero__subtitle {
+  margin-bottom: 2rem;
+}
+
+
+/* Carousel misma altura que columna izquierda */
+.celex-carousel-wrap {
+  height: 100%;
+}
+.celex-carousel-wrap .carousel,
+.celex-carousel-wrap .carousel-inner,
+.celex-carousel-wrap .carousel-item {
+  height: 100%;
+}
+.col-lg-5.ca-fade-left {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── MARQUEE CONTINUO SIN DIVS EXTRA ── */
+.celex-marquee-bar {
+  background: var(--celex-yellow);
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.celex-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Separación fija entre cada logo */
+  padding-right: 1.5rem;
+  width: max-content;
+  will-change: transform;
+  /* 20s controla la velocidad. Cambia a 15s si lo quieres más rápido */
+  animation: marquee-infinite 20s linear infinite;
+}
+
+.celex-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.celex-marquee-logo {
+  height: 32px;
+  width: auto;
+  opacity: 0.2;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── ANIMACIÓN DE IZQUIERDA A DERECHA ── */
+@keyframes marquee-infinite {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+/* ── ALERTAS & CONVOCATORIAS REDISEÑO ── */
+
+/* Fondo blanco */
+#mod-alertas {
+  background: #FFFFFF;
+  padding-top: 4rem !important; /* <--- Esta línea reduce el espacio superior */
+}
+
+#mod-alertas .celex-eyebrow__logo {
+  height: 56px !important;
+  width: auto;
+}
+
+#mod-alertas .celex-eyebrow {
+  font-weight: 700 !important; /* Grosor bold/negrita */
+}
+
+/* Título rojo y grande */
+#mod-alertas .celex-section-title {
+  color: var(--celex-red);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+	letter-spacing: 0.01em !important; /* Ajusta este valor si deseas aún más espacio entre letras */
+}
+
+/* Eyebrow con isologo */
+#mod-alertas .celex-eyebrow {
+  color: #1A1A1A !important; /* Texto negro */
+  font-size: 0.85rem !important; /* Aumento de tamaño (+2px) */
+}
+
+#mod-alertas .celex-eyebrow::before {
+  display: none !important;
+}
+
+/* Botón todas las convocatorias — amarillo */
+#mod-alertas .celex-btn--dark {
+  background: var(--celex-yellow);
+  color: var(--celex-dark) !important;
+  border-radius: 6px;
+  padding: 14px 28px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  margin-left: auto; /* Asegura el empuje a la derecha si aplica */
+}
+
+#mod-alertas .celex-btn--dark:hover {
+  background: #e2b500;
+  color: var(--celex-dark) !important;
+  box-shadow: none !important;
+}
+#mod-alertas .celex-btn--dark:active,
+#mod-alertas .celex-btn--dark:focus {
+  transform: scale(0.95);
+  background: #c9a000;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+
+
+/* Cards con borde redondeado completo */
+.celex-alerta-card {
+  border: 1px solid #e5e5e5;
+  border-left: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 1.25rem;
+  background: var(--celex-white);
+  transition: box-shadow var(--t-std);
+}
+.celex-alerta-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Fecha en cuadro rojo redondeado */
+.celex-alerta-date__box {
+  background: var(--celex-red);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 52px;
+}
+.celex-alerta-date__num {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.celex-alerta-date__month {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.celex-alerta-date__cat {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaa;
+  text-align: center;
+  margin-top: 0.4rem;
+}
+
+/* Título de card en negro y negrita */
+.celex-alerta-body__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--celex-dark);
+  margin-bottom: 0.4rem;
+}
+
+/* Descripción más pequeña */
+.celex-alerta-body__desc {
+  font-size: 0.82rem;
+  color: #777;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* CTA en rojo */
+.celex-alerta-body__cta {
+  color: var(--celex-red);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.celex-alerta-body__cta:hover {
+  color: #8a0c0c;
+}
+
+/* ── TIMELINE ROJO CON PATRÓN ── */
+.celex-timeline {
+  background-color: var(--celex-red);
+  background-image: url('Imgs/bg_pattern_red.svg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 14px;
+  padding: 2rem 2rem 2rem 2rem;
+  height: 100%;
+}
+
+.celex-timeline__head {
+  color: var(--celex-white);
+  border-bottom: 1px solid rgba(255,255,255,.2);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  padding-bottom: 0.75rem;
+}
+
+.celex-timeline__date {
+  color: var(--celex-yellow);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+.celex-timeline__text {
+  color: var(--celex-white);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.celex-timeline__dot {
+  background: var(--celex-yellow);
+  box-shadow: 0 0 0 4px rgba(245,197,24,.3);
+}
+
+.celex-timeline__item:not(.celex-timeline__item--last)::before {
+  background: linear-gradient(to bottom, rgba(245,197,24,.5), rgba(245,197,24,.1));
+}
+
+/* ── TIMELINE ALTURA Y SCROLL ── */
+#mod-alertas .row.g-4 {
+  align-items: stretch;
+}
+#mod-alertas .col-lg-5 {
+  display: flex;
+  flex-direction: column;
+}
+.celex-timeline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.celex-timeline__head {
+  flex-shrink: 0;
+}
+.celex-timeline__scroll-inner {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245,197,24,.4) transparent;
+}
+.celex-timeline__scroll-inner::-webkit-scrollbar {
+  width: 4px;
+}
+.celex-timeline__scroll-inner::-webkit-scrollbar-track {
+  background: transparent;
+}
+.celex-timeline__scroll-inner::-webkit-scrollbar-thumb {
+  background: rgba(245,197,24,.4);
+  border-radius: 4px;
+}
+
+/* Botón convocatorias mismo efecto que INGRESAR */
+#mod-alertas .celex-btn--dark {
+  background: var(--celex-yellow);
+  color: var(--celex-dark) !important;
+  border-radius: 6px;
+  transition: background var(--t-fast), transform 0.12s ease;
+}
+#mod-alertas .celex-btn--dark:hover {
+  background: #e2b500;
+  color: var(--celex-dark) !important;
+}
+#mod-alertas .celex-btn--dark:active {
+  transform: scale(0.95);
+  background: #c9a000;
+}
+
+.celex-timeline {
+  border-radius: 14px;
+  width: 100%;
+}
+
+/* ── COMPACTAR CAJA ROJA DE AGENDA ── */
+
+/* 1. Mantener las tarjetas izquierdas con espaciado natural constante */
+#mod-alertas .col-lg-7 {
+  display: block !important;
+}
+
+#mod-alertas .celex-alerta-card + .celex-alerta-card {
+  margin-top: 1rem !important; /* Espacio estándar fijo entre tarjetas */
+}
+
+/* 2. Reducir padding de la caja roja para hacerlo compacto */
+.celex-timeline {
+  padding: 1.25rem 1.5rem !important; /* Disminuimos el relleno interno (antes 2rem) */
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important; /* Distribuye el espacio justo */
+}
+
+/* 3. Ajustar el encabezado interno */
+.celex-timeline__head {
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* 4. Apretamos la distancia vertical entre cada fecha de la agenda */
+.celex-timeline__item {
+  padding-bottom: 0.85rem !important; /* Reducimos la separación (antes 1.75rem) */
+}
+
+.celex-timeline__item:last-child {
+  padding-bottom: 0 !important;
+}
+
+.celex-timeline__text {
+  font-size: 0.82rem !important; /* Ligeramente más compacto para no hacer bulto */
+  line-height: 1.3 !important;
+}
+
+
+/* ── HOMOLOGAR AGENDA TRIMESTRAL CON ACTUALIDAD ── */
+
+.celex-timeline__head {
+  font-family: var(--celex-font-sans) !important;
+  font-size: 0.85rem !important; /* Mismo tamaño que ACTUALIDAD */
+  font-weight: 100 !important;   /* Mismo grosor bold */
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: var(--celex-white) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+}
+
+/* Isologo negro con el mismo alto proporcional (36px) */
+.celex-timeline__logo {
+  height: 36px !important;
+  width: auto !important;
+  filter: none !important; /* Elimina cualquier filtro de inversión de color */
+}
+
+
+/* ============================================================
+   REDISEÑO PERFECCIONADO DE AGENDA TRIMESTRAL
+   ============================================================ */
+
+/* 1. Contenedor principal: Padding idéntico en los 4 lados */
+.celex-timeline {
+  padding: 1.75rem !important; /* Mismo espacio exacto en arriba, derecha, abajo e izquierda */
+  background-color: var(--celex-red) !important;
+  border-radius: 14px !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. Encabezado: Misma separación de 1.75rem hacia las fechas y SIN línea blanca */
+.celex-timeline__head {
+  margin-bottom: 1.75rem !important; /* Misma medida que el padding */
+  padding-bottom: 0 !important;
+  border-bottom: none !important; /* Eliminamos la raya blanca */
+  flex-shrink: 0 !important;
+}
+
+/* 3. Área de scroll aislada para las fechas */
+.celex-timeline__scroll-inner {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  padding-left: 0.5rem !important; /* Da espacio a la izquierda para que no se corten los circulitos ni su resplandor */
+  padding-right: 0.5rem !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 197, 24, 0.4) transparent;
+}
+
+/* Scrollbar personalizado sutil */
+.celex-timeline__scroll-inner::-webkit-scrollbar {
+  width: 4px;
+}
+.celex-timeline__scroll-inner::-webkit-scrollbar-thumb {
+  background: rgba(245, 197, 24, 0.4);
+  border-radius: 4px;
+}
+
+/* 4. Alineación de los circulitos amarillos (evita el corte lateral) */
+.celex-timeline__item {
+  display: flex !important;
+  gap: 1.1rem !important;
+  padding-bottom: 1.25rem !important; /* Distribuido uniformemente entre cada fecha */
+  position: relative !important;
+}
+
+.celex-timeline__item:last-child {
+  padding-bottom: 0 !important;
+}
+
+/* Círculo amarillo resplandeciente */
+.celex-timeline__dot {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  background: var(--celex-yellow) !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+  box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.3) !important; /* Resplandor completo visible */
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Línea conectora vertical ajustada al centro exacto de las bolitas */
+.celex-timeline__item:not(.celex-timeline__item--last)::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 7px !important; /* Centrado con el punto de 16px */
+  top: 18px !important;
+  bottom: 0 !important;
+  width: 2px !important;
+  background: linear-gradient(to bottom, rgba(245,197,24,.5), rgba(245,197,24,.1)) !important;
+}
+
+/* ── FORZAR SCROLL INTERNO EN AGENDA ── */
+
+/* 1. La caja principal debe limitar su tamaño */
+.celex-timeline {
+  height: 100% !important;
+  max-height: 480px !important; /* Altura máxima fija equivalente a las 3 tarjetas de la izquierda */
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important; /* Mantiene las esquinas redondeadas limpias */
+}
+
+/* 2. El contenedor de fechas activa el scroll automático */
+.celex-timeline__scroll-inner {
+  flex: 1 1 auto !important;
+  max-height: 380px !important; /* Límite para que no sobrepase el fondo rojo */
+  overflow-y: auto !important;  /* Activa la barra de scroll cuando el contenido excede la altura */
+  padding-left: 0.5rem !important;
+  padding-right: 0.6rem !important;
+  
+  /* Estilo visual elegante para la barra de scroll */
+  scrollbar-width: thin;
+  scrollbar-color: var(--celex-yellow) transparent;
+}
+
+/* Personalización del scrollbar para navegadores Webkit (Chrome, Safari, Edge) */
+.celex-timeline__scroll-inner::-webkit-scrollbar {
+  width: 5px;
+}
+
+.celex-timeline__scroll-inner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.celex-timeline__scroll-inner::-webkit-scrollbar-thumb {
+  background: var(--celex-yellow);
+  border-radius: 10px;
+}
+
+.celex-timeline__scroll-inner::-webkit-scrollbar-thumb:hover {
+  background: #e2b500;
+}
+
+/* ============================================================
+   DETALLES FINALES: ANIMACIONES Y SUAVIZADO DE ALERTAS
+   ============================================================ */
+
+/* 1. SUAVIZADO DE APARICIÓN DE TARJETAS (FADE EN SCROLL) */
+.celex-alerta-card {
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow var(--t-std) !important;
+  will-change: opacity, transform;
+}
+
+/* 2. SCROLL INTERNO SUAVE + ARREGLO DE CORTE DEL PRIMER CÍRCULO */
+.celex-timeline__scroll-inner {
+  scroll-behavior: smooth !important;
+  padding-top: 8px !important;    /* <--- Arregla el corte del primer círculo arriba */
+  padding-bottom: 8px !important; /* Mantiene la simetría abajo */
+  padding-left: 8px !important;   /* Arregla el corte lateral de la aureola */
+  padding-right: 10px !important;
+}
+
+/* 3. ANIMACIÓN DE PARPADEO / PULSO EN CÍRCULOS AMARILLOS */
+.celex-timeline__dot {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  background: var(--celex-yellow) !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+  position: relative !important;
+  z-index: 1 !important;
+  
+  /* Animación de resplandor palpitante */
+  animation: dotPulse 2.5s ease-in-out infinite !important;
+}
+
+/* Keyframes para el efecto de parpadeo suave */
+@keyframes dotPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 197, 24, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 197, 24, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 197, 24, 0);
+  }
+}
+
+/* Escalonamiento sutil para que los círculos no parpadeen al mismo tiempo */
+.celex-timeline__item:nth-child(2n) .celex-timeline__dot {
+  animation-delay: 0.6s !important;
+}
+.celex-timeline__item:nth-child(3n) .celex-timeline__dot {
+  animation-delay: 1.2s !important;
+}
+
+/* ============================================================
+   ESTILOS DE LA SECCIÓN DE IDIOMAS (IMAGEN 2)
+   ============================================================ */
+
+/* 1. Fondo claro con textura/patrón */
+.celex-section--idiomas {
+  background-color: var(--celex-gray-bg) !important;
+  background-image: url('Imgs/bg_pattern_gray.svg'); /* Ruta a tu patrón claro */
+  background-size: cover;
+  background-position: center;
+}
+
+/* 2. Encabezado de Idiomas */
+#mod-idiomas .celex-eyebrow {
+  color: var(--celex-dark) !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+}
+
+#mod-idiomas .celex-eyebrow__logo {
+  height: 36px !important; /* Controla el tamaño para que no se expanda */
+  width: auto !important;
+  flex-shrink: 0 !important;
+}
+
+#mod-idiomas .celex-eyebrow::before {
+  display: none !important;
+}
+
+#mod-idiomas .celex-section-title {
+  color: var(--celex-red) !important; /* Título en Rojo */
+  font-size: clamp(2rem, 4vw, 3.5rem) !important;
+  letter-spacing: 0.01em !important;
+}
+
+
+
+#mod-idiomas .celex-idiomas-sub {
+  color: #777777 !important;
+  font-weight: 300 !important;
+  font-size: 0.95rem !important;
+}
+
+
+/* Botón fantasma superior derecho */
+.celex-btn--ghost-light {
+  background: var(--celex-white) !important;
+  color: var(--celex-gray-dark) !important;
+  border: 1px solid #b5b5b5 !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  padding: 10px 20px !important;
+  transition: all var(--t-fast) ease !important;
+}
+
+.celex-btn--ghost-light:hover {
+  background: var(--celex-dark) !important;
+  color: var(--celex-white) !important;
+  border-color: var(--celex-dark) !important;
+}
+
+/* 3. Tarjeta de Idioma */
+.celex-idioma-card {
+  background: var(--celex-white) !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 12px !important;
+  padding: 2rem !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform var(--t-std), box-shadow var(--t-std) !important;
+}
+
+.celex-idioma-card::before {
+  display: none !important; /* Eliminamos cualquier línea amarilla previa */
+}
+
+.celex-idioma-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* Header interno de la card (Bandera + Nombre) */
+.celex-idioma-card__header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.celex-idioma-card__flag-img {
+  width: 44px !important;
+  height: auto !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.celex-idioma-card__name {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: var(--celex-dark) !important;
+  margin-bottom: 0.1rem !important;
+  line-height: 1 !important;
+}
+
+.celex-idioma-card__cefr {
+  font-family: var(--celex-font-sans) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #666666 !important;
+  margin-bottom: 0 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Lista de niveles */
+.celex-idioma-card__levels {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 1.5rem 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+}
+
+.celex-idioma-card__levels li {
+  font-size: 0.85rem !important;
+  color: var(--celex-dark) !important;
+  padding-left: 1.25rem !important;
+  position: relative !important;
+}
+
+.celex-idioma-card__levels li::before {
+  content: '→' !important;
+  position: absolute !important;
+  left: 0 !important;
+  color: var(--celex-yellow) !important;
+  font-weight: 700 !important;
+}
+
+/* Badges de modalidades */
+.celex-idioma-card__badges {
+  display: flex !important;
+  gap: 0.4rem !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.celex-badge--red {
+  background: var(--celex-red) !important;
+  color: var(--celex-white) !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  padding: 5px 12px !important;
+}
+
+.celex-badge--outline-gray {
+  background: transparent !important;
+  color: #666666 !important;
+  border: 1px solid #cccccc !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  padding: 5px 12px !important;
+}
+
+.celex-badge--gray {
+  background: #e5e5e5 !important;
+  color: #666666 !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  padding: 5px 12px !important;
+}
+
+/* ── ELIMINAR CONTENEDOR/MARCO DETRÁS DE LAS BANDERAS ── */
+
+.celex-idioma-card__flag-img {
+  background: transparent !important; /* Elimina cualquier fondo blanco o gris */
+  border: none !important;            /* Quita bordes o marcos */
+  border-radius: 0 !important;        /* Remueve el redondeado forzado del marco */
+  box-shadow: none !important;        /* Elimina la sombra alrededor */
+  padding: 0 !important;             /* Quita el espacio interno que generaba el recuadro */
+  width: 42px !important;             /* Ajusta el tamaño limpio de la bandera */
+  height: auto !important;
+}
+
+/* En caso de que tengas un contenedor div alrededor de la imagen de la bandera */
+.celex-idioma-card__flag-wrap,
+.celex-idioma-card__flag {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* ============================================================
+   ESTILO UNIFICADO DE BOTONES / CTAs (GLOBAL)
+   ============================================================ */
+
+/* 1. Estado Base (Normal) — Botón Amarillo */
+.celex-btn,
+.celex-btn-ingresar,
+.celex-btn-convo,
+.celex-btn--yellow,
+.celex-btn--dark,
+.celex-btn--ghost-light {
+  font-family: var(--celex-font-sans) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;             /* Texto en negrita sólida */
+  letter-spacing: 0.08em !important;        /* Interletrado amplio */
+  text-transform: uppercase !important;
+  background-color: #FFC13B !important;    /* Amarillo idéntico al diseño */
+  color: #000000 !important;               /* Texto negro */
+  padding: 14px 28px !important;            /* Altura y proporciones idénticas */
+  border-radius: 12px !important;           /* Bordes redondeados de la imagen */
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.6rem !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease !important;
+}
+
+/* 2. Estado Hover — Botón Negro */
+.celex-btn:hover,
+.celex-btn-ingresar:hover,
+.celex-btn-convo:hover,
+.celex-btn--yellow:hover,
+.celex-btn--dark:hover,
+.celex-btn--ghost-light:hover {
+  background-color: #000000 !important;    /* Cambia a fondo negro */
+  color: #FFFFFF !important;               /* Texto a blanco */
+  transform: translateY(-2px);
+}
+
+/* 3. Animación de la flechita (Movimiento a la derecha en hover) */
+.celex-arrow,
+.celex-btn:hover .celex-arrow,
+.celex-btn-ingresar:hover .celex-arrow,
+.celex-btn-convo:hover .celex-arrow,
+a:hover .celex-arrow {
+  display: inline-block !important;
+  transition: transform 0.22s cubic-bezier(0.44, 0, 0.56, 1) !important;
+}
+
+.celex-btn:hover .celex-arrow,
+.celex-btn-ingresar:hover .celex-arrow,
+.celex-btn-convo:hover .celex-arrow,
+a:hover .celex-arrow {
+  transform: translateX(5px) !important;   /* Desplazamiento fluido hacia la derecha */
+}
+
+/* 4. Estado Click / Active */
+.celex-btn:active,
+.celex-btn-ingresar:active,
+.celex-btn-convo:active {
+  transform: scale(0.96) !important;
+}
+
+/* ============================================================
+   AJUSTES SOLICITADOS: CTAS, BORDES, HOVER Y ANIMACIONES
+   ============================================================ */
+
+/* 1. Redondez de 5px y padding reducido para todos los CTAs principales */
+.celex-btn,
+.celex-btn-ingresar,
+.celex-btn-convo,
+.celex-btn--yellow,
+.celex-btn--dark {
+  border-radius: 5px !important;       /* Redondez exacta de 5px */
+  padding: 10px 20px !important;       /* Padding reducido */
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* 2. Corrección del color de texto en HOVER para "TODAS LAS CONVOCATORIAS" / CTAs */
+.celex-btn:hover,
+.celex-btn-ingresar:hover,
+.celex-btn-convo:hover,
+.celex-btn--yellow:hover,
+.celex-btn--dark:hover {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;            /* Fuerza el texto a blanco en hover */
+}
+
+.celex-btn:hover .celex-arrow,
+.celex-btn-ingresar:hover .celex-arrow,
+.celex-btn-convo:hover .celex-arrow {
+  color: #FFFFFF !important;            /* La flechita también pasa a blanco */
+}
+
+/* 3. Estilo de los CTAs de texto dentro de las tarjetas (Imagen 2 - INSCRIBIRSE →) */
+.celex-cta-link,
+.celex-alerta-body__cta {
+  color: var(--celex-red) !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  transition: color var(--t-fast) ease !important;
+}
+
+.celex-cta-link:hover,
+.celex-alerta-body__cta:hover {
+  color: #8a0c0c !important;
+}
+
+.celex-cta-link:hover .celex-arrow,
+.celex-alerta-body__cta:hover .celex-arrow {
+  transform: translateX(5px) !important; /* Misma animación de desplazamiento en la flecha */
+}
+
+/* 4. Disminuir el espacio vertical entre las secciones (Imagen 3) */
+#mod-alertas,
+#mod-idiomas,
+.celex-section {
+  padding-top: 4rem !important;   /* Reduce el colchón superior entre secciones */
+  padding-bottom: 4rem !important;/* Reduce el colchón inferior */
+}
+
+/* 5. Reemplazar la animación de zoom por animación de Outline/Borde Rojo (Imagen 4 y 5) */
+.celex-idioma-card {
+  transform: none !important;         /* Elimina la animación de zoom/escalado */
+  border: 1px solid #e0e0e0 !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* En HOVER: Cambia el borde a rojo con un sutil resplandor, idéntico a la imagen 5 */
+.celex-idioma-card:hover {
+  transform: none !important;         /* Sin movimiento de zoom */
+  border-color: var(--celex-red) !important; /* Borde cambia a rojo */
+  box-shadow: 0 4px 20px rgba(179, 16, 16, 0.12) !important; /* Sombra roja sutil */
+}
+
+/* ── FORZAR TEXTO Y FLECHA EN BLANCO ABSOLUTO PARA HOVER EN ALERTAS ── */
+
+#mod-alertas .celex-btn--dark:hover,
+#mod-alertas .celex-btn:hover,
+#mod-alertas a.celex-btn--dark:hover,
+#mod-alertas a.celex-btn:hover {
+  background-color: #000000 !important;
+  color: #FFFFFF !important; /* Fuerza el texto a blanco brillante */
+}
+
+/* Forzar que el span de la flecha y cualquier texto interno cambien a blanco */
+#mod-alertas .celex-btn--dark:hover *,
+#mod-alertas .celex-btn:hover *,
+#mod-alertas a.celex-btn--dark:hover *,
+#mod-alertas a.celex-btn:hover * {
+  color: #FFFFFF !important;
+}
+
+/* ── SOMBRA MÍNIMA Y SUTIL EN HOVER DE TARJETAS ── */
+
+/* 1. Tarjetas de Convocatorias / Alertas */
+.celex-alerta-card:hover {
+  border-color: var(--celex-red) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important; /* Sombra sutilísima y elegante */
+}
+
+/* 2. Tarjetas de Idiomas */
+.celex-idioma-card:hover {
+  border-color: var(--celex-red) !important;
+  box-shadow: 0 4px 12px rgba(179, 16, 16, 0.1) !important; /* Toque tenue de luz roja */
+}
+
+/* ============================================================
+   TRANSICIÓN SUAVE (SMOOTH HOVER ENTRADA / SALIDA) EN TARJETAS
+   ============================================================ */
+
+/* 1. Declarar la transición en el estado BASE (fuera de :hover) */
+.celex-alerta-card,
+.celex-idioma-card {
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
+  
+  /* Transición fluida de 0.35s con curva Bezier suave tanto al ENTRAR como al SALIR */
+  transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: border-color, box-shadow;
+}
+
+/* 2. Estado HOVER (Cambio progresivo al pasar el mouse) */
+.celex-alerta-card:hover,
+.celex-idioma-card:hover {
+  border-color: var(--celex-red) !important;
+  box-shadow: 0 4px 12px rgba(179, 16, 16, 0.06) !important;
+}
+
+/* ============================================================
+   ESTILOS DE LA SECCIÓN DE HORARIOS 26-P (IMAGEN 2)
+   ============================================================ */
+
+/* 1. Encabezado de Horarios */
+#mod-horarios .celex-eyebrow {
+  color: var(--celex-dark) !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+}
+
+#mod-horarios .celex-eyebrow::before {
+  display: none !important;
+}
+
+#mod-horarios .celex-eyebrow__logo {
+  height: 36px !important;
+  width: auto !important;
+}
+
+#mod-horarios .celex-section-title {
+  color: var(--celex-red) !important;
+  font-size: clamp(2rem, 4vw, 3.5rem) !important;
+  letter-spacing: 0.03em !important;
+}
+
+.celex-horarios-sub {
+  color: #777777 !important;
+  font-weight: 400 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+}
+
+/* 2. Tarjeta de Horarios Base */
+.celex-horario-card {
+  background: var(--celex-white) !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 12px !important;
+  padding: 2rem !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: border-color, box-shadow;
+}
+
+.celex-horario-card::after {
+  display: none !important; /* Elimina la línea amarilla previa */
+}
+
+/* Smooth Hover de Tarjeta (Borde Rojo + Sombra tenue) */
+.celex-horario-card:hover {
+  transform: none !important;
+  border-color: var(--celex-red) !important;
+  box-shadow: 0 4px 12px rgba(179, 16, 16, 0.06) !important;
+}
+
+/* 3. Cabecera interna de la Card (Bandera + Texto Trimestre) */
+.celex-horario-card__top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.celex-horario-card__flag {
+  width: 42px !important;
+  height: auto !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.celex-horario-card__tag {
+  font-family: var(--celex-font-sans) !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #999999 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.celex-horario-card__name {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: var(--celex-dark) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.celex-horario-card__desc {
+  font-size: 0.82rem !important;
+  color: #777777 !important;
+  line-height: 1.6 !important;
+  margin-bottom: 2rem !important;
+}
+
+/* 4. Grid de Links de Niveles (2 Columnas) */
+.celex-horario-card__grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0.75rem 1.5rem !important;
+  margin-top: auto !important;
+}
+
+.celex-horario-link {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.3rem !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+.celex-horario-link:hover {
+  opacity: 0.8;
+}
+
+.celex-horario-link:hover .celex-arrow {
+  transform: translateX(4px) !important;
+}
+
+/* Color Rojo para Inglés */
+.celex-horario-card__grid--red .celex-horario-link {
+  color: var(--celex-red) !important;
+}
+
+/* Color Azul para Francés */
+.celex-horario-card__grid--blue .celex-horario-link {
+  color: #2B72D0 !important;
+}
+
+/* Color Amarillo/Dorado para Alemán */
+.celex-horario-card__grid--yellow .celex-horario-link {
+  color: #E2A000 !important;
+}
+
+/* ── NUEVA CABECERA DE TARJETAS DE HORARIOS (IMAGEN NUEVA) ── */
+
+.celex-horario-card__header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.celex-horario-card__flag {
+  width: 44px !important;
+  height: auto !important;
+  border: none !important;
+  box-shadow: none !important;
+  flex-shrink: 0 !important;
+}
+
+.celex-horario-card__name {
+  font-size: 1.45rem !important;
+  font-weight: 700 !important;
+  color: var(--celex-dark) !important;
+  margin-bottom: 0.15rem !important;
+  line-height: 1.1 !important;
+}
+
+.celex-horario-card__sub {
+  font-family: var(--celex-font-sans) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  color: #999999 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+}
+
+/* ============================================================
+   NUEVO DISEÑO DE TARJETAS DE IDIOMAS CON FOTOGRAFÍA (IMAGEN 2)
+   ============================================================ */
+
+.celex-idioma-card-photo {
+  position: relative !important;
+  height: 380px !important;            /* Altura de la tarjeta */
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background-size: cover !important;
+  background-position: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  cursor: pointer !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Gradiente de sombra oscura inferior para contraste de texto */
+.celex-idioma-card-photo__overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.40) 45%,
+    rgba(0, 0, 0, 0.05) 100%
+  ) !important;
+  z-index: 1 !important;
+}
+
+/* Contenido inferior de la tarjeta */
+.celex-idioma-card-photo__content {
+  position: relative !important;
+  z-index: 2 !important;
+  padding: 1.75rem !important;
+}
+
+.celex-idioma-card-photo__title {
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  margin-bottom: 0.15rem !important;
+  line-height: 1.1 !important;
+}
+
+.celex-idioma-card-photo__sub {
+  font-family: var(--celex-font-sans) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 1.1rem !important;
+}
+
+/* Badges sobre la fotografía */
+.celex-idioma-card-photo__badges {
+  display: flex !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+/* Badge Rojo (Presencial) */
+.celex-badge--photo-red {
+  background: var(--celex-red) !important;
+  color: #FFFFFF !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  font-size: 0.68rem !important;
+  padding: 6px 12px !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Badge Amarillo (En línea) */
+.celex-badge--photo-yellow {
+  background: #FFC13B !important;
+  color: #000000 !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  font-size: 0.68rem !important;
+  padding: 6px 12px !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Badge Blanco (Autoacceso) */
+.celex-badge--photo-white {
+  background: #FFFFFF !important;
+  color: #555555 !important;
+  border-radius: 4px !important;
+  font-weight: 700 !important;
+  font-size: 0.68rem !important;
+  padding: 6px 12px !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Smooth Hover (Leve elevación + sombra elegante) */
+.celex-idioma-card-photo:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+
+/* ============================================================
+   PLANTA ACADÉMICA - 22 PROFESORES, BANDERAS Y ESCALA 110%
+   ============================================================ */
+
+/* Estructura general de la sección */
+#mod-planta {
+  width: 100% !important;
+  height: 540px !important;
+  max-height: 540px !important;
+  min-height: 540px !important;
+  background-color: var(--celex-gray-bg, #f8f9fa) !important;
+  background-image: url('Imgs/bg_pattern_gray.svg');
+  background-size: cover;
+  background-position: center;
+  position: relative !important;
+  overflow: hidden !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#mod-planta .celex-planta-container {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding-top: 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ============================================================
+   PLANTA ACADÉMICA - ESTILOS DEFINITIVOS BLINDADOS
+   ============================================================ */
+
+/* 1. SECCIÓN PRINCIPAL ACOTADA EN ALTO */
+#mod-planta {
+  width: 100% !important;
+  height: 540px !important;
+  max-height: 540px !important;
+  min-height: 540px !important;
+  background-color: var(--celex-gray-bg, #f8f9fa) !important;
+  background-image: url('Imgs/bg_pattern_gray.svg');
+  background-size: cover;
+  background-position: center;
+  position: relative !important;
+  overflow: hidden !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#mod-planta .celex-planta-container {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding-top: 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. CAPA DEGRADADA BLANCA SUPERIOR (85% DEGRADADO A 0%) */
+#mod-planta .celex-planta-fade-top {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 140px !important;
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 249, 250, 0.85) 0%,
+    rgba(248, 249, 250, 0.40) 60%,
+    rgba(248, 249, 250, 0.00) 100%
+  ) !important;
+  z-index: 15 !important;
+  pointer-events: none !important;
+}
+
+/* 3. HEADER FIJO Y TÍTULO */
+#mod-planta .celex-planta-header {
+  position: relative !important;
+  z-index: 50 !important;
+  text-align: center !important;
+  margin-bottom: 0.25rem !important;
+}
+
+#mod-planta .celex-planta-eyebrow {
+  color: #1a1a1a !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.08em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.6rem !important;
+  margin-bottom: 0.2rem !important;
+}
+
+#mod-planta .celex-planta-eyebrow::before {
+  display: none !important;
+}
+
+#mod-planta img.celex-planta-isologo {
+  height: 32px !important;
+  max-height: 32px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+#mod-planta .celex-planta-title {
+  color: var(--celex-red, #b31010) !important;
+  font-size: 2.6rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+/* 4. VIEWPORT ORBITAL Y NÚCLEO BLANCO */
+#mod-planta .celex-planta-viewport {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 960px !important;
+  height: 430px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#mod-planta .celex-planta-core {
+  position: relative !important;
+  z-index: 30 !important;
+  width: 330px !important;
+  height: 330px !important;
+  max-width: 330px !important;
+  max-height: 330px !important;
+  background-color: #FFFFFF !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 1.8rem !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
+  box-sizing: border-box !important;
+}
+
+#mod-planta .celex-planta-quote {
+  font-family: var(--celex-font-sans, sans-serif) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.48 !important;
+  color: #222222 !important;
+  margin-bottom: 0.85rem !important;
+}
+
+#mod-planta .celex-planta-logos {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.8rem !important;
+}
+
+#mod-planta img.celex-logo-uam {
+  height: 28px !important;
+  max-height: 28px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+#mod-planta img.celex-logo-celex {
+  height: 24px !important;
+  max-height: 24px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* 5. ÓRBITAS CIRCULARES */
+#mod-planta .celex-orbit-circle {
+  position: absolute !important;
+  border: 1px dashed rgba(0, 0, 0, 0.12) !important;
+  border-radius: 50% !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  pointer-events: none !important;
+}
+
+#mod-planta .celex-orbit-circle--1 { width: 440px !important; height: 440px !important; }
+#mod-planta .celex-orbit-circle--2 { width: 660px !important; height: 660px !important; }
+#mod-planta .celex-orbit-circle--3 { width: 880px !important; height: 880px !important; }
+
+/* 6. GIRO CONTINUO Y ANIMACIÓN */
+#mod-planta .celex-planta-spinner {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  animation: orbitRotateSmooth 110s linear infinite !important;
+}
+
+@keyframes orbitRotateSmooth {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+#mod-planta .celex-avatar-item {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 62px !important;
+  height: 62px !important;
+  margin-top: -31px !important;
+  margin-left: -31px !important;
+}
+
+#mod-planta .celex-avatar-wrap {
+  position: relative !important;
+  width: 62px !important;
+  height: 62px !important;
+  animation: counterRotateSmooth 110s linear infinite !important;
+  will-change: transform;
+}
+
+@keyframes counterRotateSmooth {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+/* 7. ESCALA 110% LIMPIA EN HOVER (SIN CABEZAS ABAJO) */
+#mod-planta img.celex-avatar-face {
+  width: 62px !important;
+  max-width: 62px !important;
+  height: 62px !important;
+  max-height: 62px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#mod-planta img.celex-flag-badge {
+  position: absolute !important;
+  bottom: 0px !important;
+  right: 0px !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25) !important;
+  object-fit: cover !important;
+  z-index: 5 !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#mod-planta .celex-avatar-wrap:hover img.celex-avatar-face,
+#mod-planta .celex-avatar-wrap:hover img.celex-flag-badge {
+  transform: scale(1.1) !important;
+}
+
+/* 8. COORDENADAS TRIGONOMÉTRICAS SIMÉTRICAS */
+#mod-planta .p-item--1 { transform: translate(0px, -220px) !important; }
+#mod-planta .p-item--2 { transform: translate(190px, -110px) !important; }
+#mod-planta .p-item--3 { transform: translate(190px, 110px) !important; }
+#mod-planta .p-item--4 { transform: translate(0px, 220px) !important; }
+#mod-planta .p-item--5 { transform: translate(-190px, 110px) !important; }
+#mod-planta .p-item--6 { transform: translate(-190px, -110px) !important; }
+
+#mod-planta .p-item--7  { transform: translate(0px, -330px) !important; }
+#mod-planta .p-item--8  { transform: translate(233px, -233px) !important; }
+#mod-planta .p-item--9  { transform: translate(330px, 0px) !important; }
+#mod-planta .p-item--10 { transform: translate(233px, 233px) !important; }
+#mod-planta .p-item--11 { transform: translate(0px, 330px) !important; }
+#mod-planta .p-item--12 { transform: translate(-233px, 233px) !important; }
+#mod-planta .p-item--13 { transform: translate(-330px, 0px) !important; }
+#mod-planta .p-item--14 { transform: translate(-233px, -233px) !important; }
+
+#mod-planta .p-item--15 { transform: translate(168px, -406px) !important; }
+#mod-planta .p-item--16 { transform: translate(406px, -168px) !important; }
+#mod-planta .p-item--17 { transform: translate(406px, 168px) !important; }
+#mod-planta .p-item--18 { transform: translate(168px, 406px) !important; }
+#mod-planta .p-item--19 { transform: translate(-168px, 406px) !important; }
+#mod-planta .p-item--20 { transform: translate(-406px, 168px) !important; }
+#mod-planta .p-item--21 { transform: translate(-406px, -168px) !important; }
+#mod-planta .p-item--22 { transform: translate(-168px, -406px) !important; }
+
+/* ============================================================
+   AJUSTES FINALES: LOGOS, APROVECHAMIENTO DE CÍRCULO Y FADE ALTO
+   ============================================================ */
+
+/* 1. GRADIENTE BLANCO SUPERIOR MÁS ALTO (190PX) */
+#mod-planta .celex-planta-fade-top {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 190px !important;              /* Cobertura más amplia en la parte alta */
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 249, 250, 0.90) 0%,       /* Opacidad inicial sólida */
+    rgba(248, 249, 250, 0.55) 60%,
+    rgba(248, 249, 250, 0.00) 100%      /* Degradado total a transparente */
+  ) !important;
+  z-index: 15 !important;
+  pointer-events: none !important;
+}
+
+/* 2. MAXIMIZAR APROVECHAMIENTO DEL ESPACIO INTERIOR DEL CÍRCULO BLANCO */
+#mod-planta .celex-planta-core {
+  position: relative !important;
+  z-index: 30 !important;
+  width: 330px !important;
+  height: 330px !important;
+  background-color: #FFFFFF !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 1.2rem 1.6rem !important;    /* Padding compacto para ganar espacio interno */
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07) !important;
+  box-sizing: border-box !important;
+}
+
+#mod-planta .celex-planta-quote {
+  font-family: var(--celex-font-sans, sans-serif) !important;
+  font-size: 0.86rem !important;        /* Tipografía más grande para llenar el área */
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+  color: #111111 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* 3. ESTILOS Y ESCALA DE LOS NUEVOS LOGOTIPOS */
+#mod-planta .celex-planta-logos {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1.2rem !important;
+  width: 100% !important;
+}
+
+/* Isologo UAM Azcapotzalco Rojo */
+#mod-planta img.celex-logo-uam-rojo {
+  height: 34px !important;              /* Presencia visual destacada */
+  max-height: 34px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* Logo Celex Corto */
+#mod-planta img.celex-logo-celex-corto {
+  height: 30px !important;              /* Proporción armónica en la dupla */
+  max-height: 30px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* ============================================================
+   ESTILOS DE RECURSOS Y TRÁMITES (SECCIÓN OSCURA)
+   ============================================================ */
+
+/* Fondo oscuro general de la sección */
+.celex-section--dark {
+  background-color: #050505 !important;
+  color: #FFFFFF !important;
+  padding: 4rem 0 !important;
+}
+
+/* Eyebrow oscuro */
+.celex-eyebrow--dark {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+.celex-eyebrow--dark::before {
+  display: none !important; /* Sin la raya amarilla */
+}
+
+/* Título e isologo en sección oscura */
+#mod-recursos .celex-eyebrow__logo {
+  height: 32px !important;
+  width: auto !important;
+}
+
+.celex-section-title--white {
+  color: #FFFFFF !important;
+  font-size: clamp(2.2rem, 4vw, 3.2rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.celex-sub-text--dark {
+  color: #A0A0A0 !important;
+  font-size: 0.92rem !important;
+  font-weight: 400 !important;
+}
+
+/* Tarjetas Oscuras de Trámites */
+.celex-recurso-card {
+  background-color: #121212 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  padding: 2.2rem !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Hover suave en tarjetas de trámites */
+.celex-recurso-card:hover {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Iconos de las tarjetas */
+.celex-recurso-card__icon {
+  margin-bottom: 1.5rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.celex-recurso-card__icon--red { color: #E53935 !important; }
+.celex-recurso-card__icon--orange { color: #FF9800 !important; }
+.celex-recurso-card__icon--gray { color: #9E9E9E !important; }
+
+/* Tipografía interna de las tarjetas */
+.celex-recurso-card__title {
+  color: #FFFFFF !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  margin-bottom: 1rem !important;
+}
+
+.celex-recurso-card__desc {
+  color: #B0B0B0 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 2rem !important;
+}
+
+/* CTAs dentro de las tarjetas oscuras */
+.celex-recurso-card .celex-btn {
+  width: auto !important;
+  align-self: flex-start !important;
+}
+
+/* ============================================================
+   ESTILOS DEFINITIVOS Y AISLADOS DE FOOTER (.celex-ft-*)
+   ============================================================ */
+
+/* 1. Fondo Oscuro General */
+footer.celex-footer-custom {
+  background-color: #111111 !important;
+  color: #909090 !important;
+  padding: 4rem 0 0 0 !important;
+  font-family: var(--celex-font-sans, 'Stack Sans Headline', 'Inter', sans-serif) !important;
+  border-top: 1px solid #222222 !important;
+}
+
+/* Reset estricto de viñetas para este footer */
+footer.celex-footer-custom ul,
+footer.celex-footer-custom li {
+  list-style: none !important;
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* 2. Brand & Logos en Fila Horizontal */
+.celex-ft-brand {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.celex-ft-logo-uam {
+  height: 42px !important;
+  width: auto !important;
+}
+
+.celex-ft-divider {
+  width: 1px !important;
+  height: 38px !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.celex-ft-celex-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+}
+
+.celex-ft-logo-celex {
+  height: 52px !important;
+  width: auto !important;
+}
+
+.celex-ft-celex-text {
+  display: flex !important;
+  flex-direction: column !important;
+  font-size: 0.65rem !important;
+  line-height: 1.2 !important;
+  color: #FFFFFF !important;
+}
+
+.celex-ft-desc {
+  color: #909090 !important;
+  font-size: 0.72rem !important;
+  line-height: 1.6 !important;
+}
+
+/* 3. Títulos Amarillos (#FFD042) */
+.celex-ft-title {
+  font-family: var(--celex-font-sans, 'Stack Sans Headline', 'Inter', sans-serif) !important;
+  color: #FFD042 !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 1.2rem !important;
+  line-height: 1 !important;
+}
+
+/* 4. Listas y Links (Gris #909090, 0.7rem, -2px) */
+.celex-ft-list li {
+  font-size: 0.72rem !important;
+  line-height: 1.75 !important;
+  margin-bottom: 0.85rem !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.6rem !important;
+}
+
+.celex-ft-list a {
+  color: #909090 !important;
+  text-decoration: none !important;
+  font-size: 0.72rem !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+}
+
+.celex-ft-list a:hover {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  transform: translateX(3px) !important;
+}
+
+/* Íconos de contacto en amarillo */
+.celex-ft-icon {
+  color: #FFD042 !important;
+  font-size: 0.9rem !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+}
+
+/* 5. Redes Sociales Circular Transparente */
+.celex-ft-socials {
+  display: flex !important;
+  gap: 0.6rem !important;
+}
+
+.celex-ft-soc-btn {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  transition: all 0.25s ease !important;
+}
+
+.celex-ft-soc-btn i {
+  color: #CCCCCC !important;
+  font-size: 0.9rem !important;
+}
+
+.celex-ft-soc-btn:hover {
+  background-color: #FFD042 !important;
+  border-color: #FFD042 !important;
+}
+
+.celex-ft-soc-btn:hover i {
+  color: #000000 !important;
+}
+
+/* 6. Copyright Bottom */
+.celex-ft-bottom {
+  background-color: #080808 !important;
+  border-top: 1px solid #1c1c1c !important;
+  padding: 1.2rem 0 !important;
+  font-size: 0.72rem !important;
+  color: #666666 !important;
+  margin-top: 3rem !important;
+}
+
+/* 7. Columnas 40% / 20% / 20% / 20% */
+@media (min-width: 992px) {
+  footer.celex-footer-custom .col-lg-5 {
+    flex: 0 0 40% !important;
+    max-width: 40% !important;
+  }
+  footer.celex-footer-custom .col-lg-3,
+  footer.celex-footer-custom .col-lg-2 {
+    flex: 0 0 20% !important;
+    max-width: 20% !important;
+  }
+}
+
+/* ── ANCHOS EXACTOS EN 3 COLUMNAS: 40% / 30% / 30% ── */
+@media (min-width: 992px) {
+  /* Columna 1 (Logos, Redes y Contacto): 40% de ancho */
+  footer.celex-footer-custom .col-lg-5 {
+    flex: 0 0 40% !important;
+    max-width: 40% !important;
+  }
+
+  /* Columnas 2 y 3 (Secciones dobles): 30% de ancho cada una */
+  footer.celex-footer-custom .col-lg-35 {
+    flex: 0 0 30% !important;
+    max-width: 30% !important;
+  }
+}
+
+/* ── ALINEACIÓN HORIZONTAL DE TÍTULOS EN FOOTER (CONTACTO / IDIOMAS / INSTITUCIONAL) ── */
+
+@media (min-width: 992px) {
+  /* Convierte las columnas 2 y 3 en contenedores flex verticales que ocupan el 100% de la altura */
+  footer.celex-footer-custom .col-lg-5,
+  footer.celex-footer-custom .col-lg-35 {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Empuja el bloque de CONTACTO (Columna 1) para que se alinee con la sección inferior */
+  footer.celex-footer-custom .celex-ft-contact-wrap {
+    margin-top: auto !important;
+    padding-top: 1rem !important;
+  }
+
+  /* Asegura que los bloques inferiores de las columnas 2 y 3 compartan el mismo margen superior */
+  footer.celex-footer-custom .celex-ft-block-bottom {
+    margin-top: auto !important;
+    padding-top: 1rem !important;
+  }
+}
+				  
+/* FIN: RESPONSIVE */
